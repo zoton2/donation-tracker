@@ -1,0 +1,18 @@
+@import "gdq.scss";
+@import "_colors.scss";
+@import "_fonts.scss";
+@import "_settings.scss";
+
+body {
+	//background: $background-gradient-darker;
+	color: $white;
+	font-family: $condensed;
+}
+
+h1,h2 {
+	font-family: $header;
+	
+	small {
+		font-family: $serif;
+	}
+}

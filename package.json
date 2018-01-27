@@ -1,0 +1,23 @@
+{
+  "name": "tracker-style",
+  "version": "1.0.0",
+  "description": "Tracker styling for ESA",
+  "main": "index.js",
+  "scripts": {
+    "build": "node-sass -o static scss/main.scss"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/esamarathon/tracker-style"
+  },
+  "keywords": [
+    "tracker",
+    "esa",
+    "style"
+  ],
+  "author": "Johan \"Zephyyrr\" Fogelström",
+  "license": "MIT",
+  "devDependencies": {
+    "node-sass": "^4.7.2"
+  }
+}

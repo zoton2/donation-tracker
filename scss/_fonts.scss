@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed|Roboto:300i,400,700');
+
+/* roboto-300 - latin */
+@font-face {
+  font-family: 'FFFFORWARD';
+  font-style: normal;
+  font-weight: 300;
+  src: url('/static/fonts/FFFFORWA.ttf'); /* IE9 Compat Modes */
+  src: local('FFF Forward'),
+ //    url('../fonts/roboto-v18-latin-300.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+ //    url('../fonts/roboto-v18-latin-300.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/static/fonts/FFFFORWA.woff') format('woff'), /* Modern Browsers */
+       url('/static/fonts/FFFFORWA.ttf') format('truetype'), /* Safari, Android, iOS */
+ //    url('../fonts/roboto-v18-latin-300.svg#Roboto') format('svg'); /* Legacy iOS */
+}

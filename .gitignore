@@ -3,3 +3,5 @@
 *.swp
 build
 *.egg-info
+static/main.css
+node_modules/

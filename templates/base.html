@@ -5,6 +5,7 @@
 <html>
 <head>
     <title>{% block title %}Base Title{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" type="text/css" href="{% static "jquery.datetimepicker.css" %}" />
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" />
@@ -88,7 +89,7 @@
                 Running on Django with Python
             {% endblocktrans %}
             <br />{% trans "Python code by UraniumAnchor, SMK, and jdeng" %}
-            <br />{% trans "CSS by Cool Matty" %}
+            <br />{% trans "CSS by Cool Matty &amp; Zephyyrr" %}
             <!-- <br />{% trans "Translated By"%}-->
         </div>
     {% endif %}

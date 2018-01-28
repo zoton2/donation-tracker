@@ -1,4 +1,9 @@
-@import "gdq.scss";
+@import "gdq/normalize.scss";
+@import "gdq/print.scss";
+@import "gdq/glyphicons.scss";
+@import "gdq/gdq.scss";
+
+//@import "bootstrap.scss";
 @import "_colors.scss";
 @import "_fonts.scss";
 @import "_settings.scss";
@@ -7,12 +12,41 @@ body {
 	//background: $background-gradient-darker;
 	color: $white;
 	font-family: $condensed;
+
+    &:after {
+       content: '';
+       height: 25rem;
+       max-width: 25rem;
+       width: 70%;
+       position: fixed;
+       right: 0;
+       background-image: url('/static/slogan-bg.png');
+       background-size: 100%;
+       background-position: right bottom;
+       background-repeat: no-repeat;
+       display: block;
+       opacity: 0;
+       bottom: 0;
+       z-index: 2;
+       pointer-events: none;
+
+       @include medium-up {
+          opacity: 1;
+       }
+    }
 }
 
 h1,h2 {
-	font-family: $header;
+	font-family: $serif;
 	
 	small {
 		font-family: $serif;
 	}
 }
+
+.table {
+	tbody {
+		color: $black;
+	}
+}
+

@@ -1,4 +1,5 @@
 import json
+import urllib2
 
 import collections
 
@@ -415,6 +416,24 @@ def edit(request):
     models = obj.save() or [obj]
     if changed_fields:
         logutil.change(request, obj, ' '.join(changed_fields))
+        
+        if edittype == 'donation':
+            postbackData = {
+                'message__type': 'donation_edited',
+                'id': obj.id,
+                'timereceived': str(obj.timereceived),
+                'comment': obj.comment,
+                'amount': obj.amount,
+                'donor__visibility': obj.donor.visibility,
+                'donor__visiblename': obj.donor.visible_name()
+            }
+            
+            postbackJSon = json.dumps(postbackData, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder).encode('utf-8')
+            postbacks = tracker.models.PostbackURL.objects.filter(event=obj.event)
+            for postback in postbacks:
+                opener = urllib2.build_opener()
+                req = urllib2.Request(postback.url, postbackJSon, headers={'Content-Type': 'application/json; charset=utf-8'})
+                response = opener.open(req, timeout=5)
     resp = HttpResponse(serializers.serialize('json', models, ensure_ascii=False),content_type='application/json;charset=utf-8')
     if 'queries' in request.GET and request.user.has_perm('tracker.view_queries'):
         return HttpResponse(json.dumps(connection.queries, ensure_ascii=False, indent=1),content_type='application/json;charset=utf-8')

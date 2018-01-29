@@ -48,12 +48,11 @@
 			<td>
 				{{ run.description|forumfilter }}
 			</td>
-			<td>
-				{% datetime run.starttime %}
-			</td>
-			<td>
-				{% datetime run.endtime %}
-			</td>
+			{% if run.starttime %} {% datetime run.starttime %} {% else %} N/A {%endif %}
+            </td>
+        	<td>
+            {% if run.endtime %} {% datetime run.endtime %} {% else %} N/A {%endif %}
+            </td>
 			{% autoescape off %}
 			<td>
 				{% if run.hasbids %}<b>{% trans "Yes" %}</b>{% else %}{% trans "No" %}{% endif %}

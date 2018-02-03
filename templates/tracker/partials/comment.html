@@ -2,7 +2,10 @@
 {% load donation_tags %}
 
 {% if state == 'APPROVED' %}
-	{{ comment|forumfilter }}<hr>
+	{{ comment|forumfilter }}
+{% endif %}
+{% if state != 'APPROVED' %}
+	<hr>
 {% endif %}
 {% if state == 'PENDING' %}
 	<i class="fa text-gdq-black fa-question-circle"></i> ({% trans "Comment pending approval" %})

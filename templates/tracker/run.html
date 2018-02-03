@@ -11,7 +11,7 @@
 	</h2>
 
   {% if run.description %}
-	<h3 class="text-gdq-black">{% trans "Description" %}</h3>
+	<h3 class="highlighted">{% trans "Description" %}</h3>
 
 	<table class="table table-condensed table-striped small">
 
@@ -24,7 +24,7 @@
   {% endif %}
 
   {% if run.deprecated_runners %}
-  <h3  class="text-gdq-black">
+  <h3  class="highlighted">
     {% trans "Runners" %}
 	</h3>
   <table  class="table table-condensed table-striped small">
@@ -38,7 +38,7 @@
   {% endif %}
 
   {% if bids %}
-    <h3 class="text-gdq-black">
+    <h3 class="highlighted">
       {% trans "Bids" %}
     </h3>
     <table  class="table table-condensed table-striped small">

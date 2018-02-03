@@ -203,6 +203,7 @@ def ipn(request):
 
       # TODO: this should eventually share code with the 'search' method, to
       postbackData = {
+        'message__type': 'donation_transaction_complete',
         'id': donation.id,
         'timereceived': str(donation.timereceived),
         'comment': donation.comment,

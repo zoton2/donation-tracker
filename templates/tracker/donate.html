@@ -104,20 +104,20 @@
                 donationTotal = 0;
             }
 
-            var txtColor = "Black";
+            var clss = "";
 
             if (totalBidsAllocated > donationTotal) {
-                txtColor = "Red";
+                clss = "highlighted";
             }
 
             var $totalallocated = $("#totalallocated");
-            $totalallocated.get(0).style.color = txtColor;
+            $totalallocated.get(0).className = clss;
             $totalallocated.html(totalBidsAllocated.toFixed(2));
             $("#donationtotal").html(donationTotal.toFixed(2));
 
             var $totalremaining = $("#totalremaining");
             $totalremaining.html((donationTotal - totalBidsAllocated).toFixed(2));
-            $totalremaining.get(0).style.color = txtColor;
+            $totalremaining.get(0).className = clss;
         }
 
         function prizeAmountUpdate() {
@@ -142,20 +142,20 @@
                 donationTotal = 0;
             }
 
-            var txtColor = "Black";
+            var clss = "";
 
-            if (totalPrizeAllocated > donationTotal) {
-                txtColor = "Red";
+            if (totalBidsAllocated > donationTotal) {
+                clss = "highlighted";
             }
 
             var $totalprizeallocated = $("#totalprizeallocated");
-            $totalprizeallocated.get(0).style.color = txtColor;
+            $totalprizeallocated.get(0).className = clss;
             $totalprizeallocated.html(totalPrizeAllocated.toFixed(2));
             $("#prizedonationtotal").html(donationTotal.toFixed(2));
 
             var $totalprizeremaining = $("#totalprizeremaining");
             $totalprizeremaining.html((donationTotal - totalPrizeAllocated).toFixed(2));
-            $totalprizeremaining.get(0).style.color = txtColor;
+            $totalprizeremaining.get(0).className = clss;
         }
 
         function validateDonationForm() {

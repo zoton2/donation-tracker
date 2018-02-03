@@ -17,24 +17,16 @@
         {{ donation.amount|money }}
     </h2>
     {% if donation.comment %}
-        <table class="table table-condensed">
-            <thead>
-            <tr>
-                <th align="center">
-                    <b>
-                        {% trans "Comment" %}
-                    </b>
-                </th>
-            </tr>
-            </thead>
-            <tr>
-                <td class="{{ commentstate }}">
-                    {% with donation.comment as comment %}{% with donation.commentstate as state %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{% trans "Comment" %}</h3>
+            </div>
+            <div class="panel-body">
+                {% with donation.comment as comment %}{% with donation.commentstate as state %}
                         {% include "tracker/partials/comment.html" %}
                     {% endwith %}{% endwith %}
-                </td>
-            </tr>
-        </table>
+            </div>
+        </div>
     {% endif %}
 
     {% if donationbids %}

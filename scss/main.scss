@@ -46,7 +46,19 @@ h1,h2 {
 
 .table {
 	tbody {
+    background-color: $white;
 		color: $black;
 	}
+
+  hr {
+    display: none;
+  }
 }
 
+.table-striped > tbody > tr:nth-of-type(even) {
+    background-color: #e9e9e9;
+}
+
+.panel {
+  color: $black;
+}

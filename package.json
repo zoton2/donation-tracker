@@ -4,8 +4,8 @@
   "description": "Tracker styling for ESA",
   "main": "index.js",
   "scripts": {
-    "build-css": "node-sass -o static --include-path node_modules/bootstrap/scss scss/main.scss",
-    "watch-css": "node-sass --watch -o static --include-path node_modules/bootstrap/scss scss/main.scss"
+    "build-css": "node-sass -o static --include-path node_modules/bootstrap/scss scss",
+    "watch-css": "node-sass --watch -o static --include-path node_modules/bootstrap/scss scss/main.scss:static/main.css scss/donate.scss:static/donate.css"
   },
   "repository": {
     "type": "git",

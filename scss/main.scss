@@ -1,12 +1,12 @@
-@import "gdq/normalize.scss";
-@import "gdq/print.scss";
-@import "gdq/glyphicons.scss";
-@import "gdq/gdq.scss";
+@import "gdq/_normalize.scss";
+@import "gdq/_print.scss";
+@import "gdq/_glyphicons.scss";
+@import "gdq/_gdq.scss";
 
 //@import "bootstrap.scss";
-@import "_colors.scss";
-@import "_fonts.scss";
-@import "_settings.scss";
+@import "partials/_colors.scss";
+@import "partials/_fonts.scss";
+@import "partials/_settings.scss";
 
 body {
 	//background: $background-gradient-darker;

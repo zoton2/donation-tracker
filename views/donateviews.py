@@ -201,15 +201,11 @@ def ipn(request):
 
       agg = filters.run_model_query('donation', {'event': donation.event.id }).aggregate(amount=Sum('amount'))
 
-      # TODO: this should eventually share code with the 'search' method, to
+      # When a donation's PayPal transaction completes, output a postback.
       postbackData = {
-        'message__type': 'donation_transaction_complete',
-        'id': donation.id,
-        'timereceived': str(donation.timereceived),
-        'comment': donation.comment,
+        'message_type': 'donation_total_change',
+        'event': donation.event,
         'amount': donation.amount,
-        'donor__visibility': donation.donor.visibility,
-        'donor__visiblename': donation.donor.visible_name(),
         'new_total': agg['amount']
       }
       postbackJSon = json.dumps(postbackData, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder).encode('utf-8')

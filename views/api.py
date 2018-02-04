@@ -395,6 +395,7 @@ def edit(request):
         raise PermissionDenied('You do not have permission to set the following field(s) on the requested object: %s' %
                                ','.join(sorted(bad_fields)))
     changed_fields = []
+    donation_processed = false
     for k,v in editParams.items():
         if k in ('type','id'):
             continue
@@ -412,6 +413,8 @@ def edit(request):
                 changed_fields.append(u'Changed %s from empty to "%s".' % (k, new_value))
             else:
                 changed_fields.append(u'Changed %s from "%s" to "%s".' % (k, old_value, new_value))
+                if edittype == 'donation' and k == 'commentstate' and old_value == 'PENDING' and new_value != 'PENDING':
+                    donation_processed = true
     obj.full_clean()
     models = obj.save() or [obj]
     if changed_fields:
@@ -419,7 +422,7 @@ def edit(request):
         
         # If a donation has been edited, output a postback.
         # This is (usually) when a donation is changed from the Process/Read Donations panels.
-        if edittype == 'donation':
+        if edittype == 'donation' and donation_processed:
             postbackData = {
                 'message_type': 'donation_edited',
                 'event': obj.event.short,

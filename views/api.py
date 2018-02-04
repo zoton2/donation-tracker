@@ -429,7 +429,7 @@ def edit(request):
             }
             
             postbackJSon = json.dumps(postbackData, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder).encode('utf-8')
-            postbacks = tracker.models.PostbackURL.objects.filter(event=obj.event)
+            postbacks = PostbackURL.objects.filter(event=obj.event)
             for postback in postbacks:
                 opener = urllib2.build_opener()
                 req = urllib2.Request(postback.url, postbackJSon, headers={'Content-Type': 'application/json; charset=utf-8'})

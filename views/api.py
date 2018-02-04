@@ -417,17 +417,19 @@ def edit(request):
     if changed_fields:
         logutil.change(request, obj, ' '.join(changed_fields))
         
+        # If a donation has been edited, output a postback.
+        # This is (usually) when a donation is changed from the Process/Read Donations panels.
         if edittype == 'donation':
             postbackData = {
-                'message__type': 'donation_edited',
+                'message_type': 'donation_edited',
+                'event': obj.event,
                 'id': obj.id,
                 'timereceived': str(obj.timereceived),
                 'comment': obj.comment,
                 'amount': obj.amount,
-                'donor__visibility': obj.donor.visibility,
-                'donor__visiblename': obj.donor.visible_name()
+                'comment_state': obj.commentstate,
+                'donor_visiblename': obj.donor.visible_name()
             }
-            
             postbackJSon = json.dumps(postbackData, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder).encode('utf-8')
             postbacks = PostbackURL.objects.filter(event=obj.event)
             for postback in postbacks:

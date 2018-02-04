@@ -646,7 +646,7 @@ class EventAdmin(CustomModelAdmin):
     }),
     ('Google Document', {
       'classes': ['collapse'],
-      'fields': ['scheduleid']
+      'fields': []
     }),
   ]
 

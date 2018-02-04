@@ -422,9 +422,9 @@ def edit(request):
         if edittype == 'donation':
             postbackData = {
                 'message_type': 'donation_edited',
-                'event': obj.event,
+                'event': obj.event.short,
                 'id': obj.id,
-                'timereceived': str(obj.timereceived),
+                'time_received': str(obj.timereceived),
                 'comment': obj.comment,
                 'amount': obj.amount,
                 'comment_state': obj.commentstate,

@@ -204,7 +204,7 @@ def ipn(request):
       # When a donation's PayPal transaction completes, output a postback.
       postbackData = {
         'message_type': 'donation_total_change',
-        'event': donation.event,
+        'event': donation.event.short,
         'amount': donation.amount,
         'new_total': agg['amount']
       }

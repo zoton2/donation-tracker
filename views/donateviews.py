@@ -206,7 +206,8 @@ def ipn(request):
         'message_type': 'donation_total_change',
         'event': donation.event.short,
         'amount': donation.amount,
-        'new_total': agg['amount']
+        'new_total': agg['amount'],
+        'id': donation.id
       }
       postbackJSon = json.dumps(postbackData, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder).encode('utf-8')
       postbacks = models.PostbackURL.objects.filter(event=donation.event)

@@ -413,7 +413,7 @@ def edit(request):
                 changed_fields.append(u'Changed %s from empty to "%s".' % (k, new_value))
             else:
                 changed_fields.append(u'Changed %s from "%s" to "%s".' % (k, old_value, new_value))
-                if edittype == 'donation' and k == 'commentstate' and old_value in ('ABSENT', 'PENDING', 'FLAGGED') and new_value in ('DENIED', 'APPROVED'):
+                if edittype == 'donation' and k == 'readstate' and old_value in ('PENDING', 'FLAGGED', 'READY') and new_value in ('IGNORED', 'READ'):
                     donation_processed = True
     obj.full_clean()
     models = obj.save() or [obj]
@@ -424,7 +424,7 @@ def edit(request):
         # This is (usually) when a donation is changed from the Process/Read Donations panels.
         if edittype == 'donation' and donation_processed:
             postbackData = {
-                'message_type': 'donation_edited',
+                'message_type': 'donation_push',
                 'event': obj.event.short,
                 'id': obj.id,
                 'time_received': str(obj.timereceived),

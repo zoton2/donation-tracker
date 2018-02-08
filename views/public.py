@@ -2,6 +2,7 @@ from itertools import ifilter
 
 from tracker.models import *
 from tracker.forms import *
+from tracker.models.event import LatestEvent
 from . import common as views_common
 import tracker.filters as filters
 import tracker.viewutil as viewutil
@@ -37,6 +38,9 @@ def eventlist(request):
 def index(request,event=None):
   event = viewutil.get_event(event)
   eventParams = {}
+
+  if not event.id:
+    event = LatestEvent()
 
   if event.id:
     eventParams['event'] = event.id

@@ -18,4 +18,4 @@ python-dateutil==2.4.2
 pytz==2017.3
 rsa==3.2
 six==1.9.0
-requests==2.12.1
+requests==2.18.4

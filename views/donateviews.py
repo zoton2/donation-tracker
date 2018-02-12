@@ -1,10 +1,10 @@
 from decimal import Decimal
 import pytz
 import json
-import urllib2
 import datetime
 import random
 import traceback
+import requests
 
 from django.db import transaction
 from django.db.models import Sum
@@ -212,9 +212,7 @@ def ipn(request):
       postbackJSon = json.dumps(postbackData, ensure_ascii=False, cls=serializers.json.DjangoJSONEncoder).encode('utf-8')
       postbacks = models.PostbackURL.objects.filter(event=donation.event)
       for postback in postbacks:
-        opener = urllib2.build_opener()
-        req = urllib2.Request(postback.url, postbackJSon, headers={'Content-Type': 'application/json; charset=utf-8'})
-        response = opener.open(req, timeout=5)
+        requests.post(postback.url, data=postbackJSon, headers={'Content-Type': 'application/json; charset=utf-8'})
     elif donation.transactionstate == 'CANCELLED':
       # eventually we may want to send out e-mail for some of the possible cases
       # such as payment reversal due to double-transactions (this has happened before)

@@ -1,15 +1,23 @@
-{% extends "base.html" %}
+{% extends "tracker/index.html" %}
+{% load donation_tags %}
 {% load staticfiles %}
 
 {% block title %}
     {{ event.name|title }} -- Cancelled
 {% endblock %}
 
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="{% static "queueindex.css" %}" />
-{% endblock %}
-
 {% block content %}
-    The transaction has been cancelled.  No money had been transferred.
+<div class="row" style="margin-top: 3rem;">
+	<div class="row col-xs-10 col-xs-offset-1 col-sm-4 col-sm-offset-4">
+		<div class="panel panel-default">
+			<div class="panel-body text-center">
+				The transaction has been cancelled.  
+				No money had been transferred.
+			</div>
+		</div>
+	</div>
+</div>
+
+{% include "tracker/partials/navfooter.html" %}
 {% endblock %}
 

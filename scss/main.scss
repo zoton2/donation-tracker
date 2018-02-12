@@ -13,6 +13,7 @@ body {
 	color: $white;
 	font-family: $condensed;
 
+    /*
     &:after {
        content: '';
        height: 25rem;
@@ -34,6 +35,7 @@ body {
           opacity: 1;
        }
     }
+    */
 }
 
 h1,h2 {
@@ -54,6 +56,10 @@ h1,h2,h3,h4,h5,h6 {
 	tbody {
     background-color: $white;
 		color: $black;
+
+    a {
+      color: $blue;
+    }
 	}
 
   hr {
@@ -66,5 +72,19 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 .panel {
+  color: $black;
+}
+
+a {
+  color: $orange;
+
+
+  &.highlighted {
+    font-size: 120%;
+    font-weight: bold;
+  }
+}
+
+input, textarea {
   color: $black;
 }

@@ -59,7 +59,7 @@ class TimestampField(models.Field):
       except ValueError:
         return value
     if not value:
-      return 0
+      return '0'
     h,m,s,ms = value / 3600000, value / 60000 % 60, value / 1000 % 60, value % 1000
     if h or self.always_show_h:
       if ms or self.always_show_ms:
@@ -241,8 +241,8 @@ class SpeedRun(models.Model):
         self.display_name = self.name
 
   def save(self, fix_time=True, fix_runners=True, *args, **kwargs):
-    can_fix_time = self.order != None and (self.run_time != 0 or self.setup_time != 0)
     i = TimestampField.time_string_to_int
+    can_fix_time = self.order != None and (i(self.run_time) != 0 or i(self.setup_time) != 0)
 
     # fix our own time
     if fix_time and can_fix_time:
@@ -250,7 +250,7 @@ class SpeedRun(models.Model):
       if prev:
         self.starttime = prev.starttime + datetime.timedelta(milliseconds=i(prev.run_time)+i(prev.setup_time))
       else:
-        self.starttime = self.event.timezone.localize(datetime.datetime.combine(self.event.date, datetime.time(11,30)))
+        self.starttime = self.event.timezone.localize(datetime.datetime.combine(self.event.date, datetime.time(15,00)))
       self.endtime = self.starttime + datetime.timedelta(milliseconds=i(self.run_time)+i(self.setup_time))
 
     if fix_runners and self.id:
@@ -276,7 +276,7 @@ class SpeedRun(models.Model):
         if prev:
           self.starttime = prev.starttime + datetime.timedelta(milliseconds=i(prev.run_time)+i(prev.setup_time))
         else:
-          self.starttime = self.event.timezone.localize(datetime.datetime.combine(self.event.date, datetime.time(12)))
+          self.starttime = self.event.timezone.localize(datetime.datetime.combine(self.event.date, datetime.time(15,00)))
         next = SpeedRun.objects.filter(event=self.event, starttime__gte=self.starttime).exclude(order=None).first()
         if next and next.starttime != self.starttime:
           return [self] + next.save(*args, **kwargs)

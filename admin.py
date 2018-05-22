@@ -560,7 +560,7 @@ class DonorAdmin(CustomModelAdmin):
   form = DonorForm
   search_fields = ('email', 'paypalemail', 'alias', 'firstname', 'lastname')
   list_filter = ('donation__event', 'visibility')
-  readonly_fields = ('visible_name',)
+  readonly_fields = ('visible_name','identityhash')
   list_display = ('__unicode__', 'visible_name', 'alias', 'visibility')
   fieldsets = [
     (None, { 'fields': ['email', 'alias', 'firstname', 'lastname', 'visibility', 'visible_name', 'user', 'solicitemail'] }),
@@ -572,6 +572,10 @@ class DonorAdmin(CustomModelAdmin):
       'classes': ['collapse'],
       'fields': ['addressstreet', 'addresscity', 'addressstate', 'addresscountry','addresszip']
     }),
+    ('Privacy', {
+      'classes': ['collapse'],
+      'fields': ['anonymized','identityhash']
+      })
   ]
   inlines = [DonationInline, PrizeWinnerInline, DonorPrizeEntryInline,]
   def visible_name(self, obj):

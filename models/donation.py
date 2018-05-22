@@ -1,3 +1,4 @@
+import hashlib
 from decimal import Decimal
 
 from django.db import models
@@ -154,6 +155,8 @@ class Donor(models.Model):
   # Donor specific info
   paypalemail = models.EmailField(max_length=128,unique=True,null=True,blank=True,verbose_name='Paypal Email')
   solicitemail = models.CharField(max_length=32,choices=(('CURR', 'Use Existing (Opt Out if not set)'),('OPTOUT', 'Opt Out'), ('OPTIN','Opt In')),default='CURR')
+  identityhash = models.CharField(max_length=64,null=True,unique=True,verbose_name='Email Hash')
+  anonymized = models.BooleanField(default=False)
 
   class Meta:
     app_label = 'tracker'
@@ -171,6 +174,22 @@ class Donor(models.Model):
       raise ValidationError("Cannot set Donor visibility to 'Alias Only' without an alias")
     if not self.paypalemail:
       self.paypalemail = None
+
+  def gdpr_scrub(self):
+    self.email = "anonymous@example.com"
+    self.alias = 'Anonymous'
+    self.firstname = "Anon"
+    self.lastname = "ymous"
+    self.visibility == 'ANON'
+    self.addresscity = ''
+    self.addressstreet = ''
+    self.addressstate = ''
+    self.addresszip = ''
+    self.addresscountry = None
+    self.paypalemail = None
+    self.solicitemail = 'OPTOUT'
+    self.anonymized = True
+    self.save()
 
   def contact_name(self):
     if self.firstname:
@@ -198,6 +217,12 @@ class Donor(models.Model):
 
   def get_absolute_url(self, event=None):
     return reverse('tracker:donor', args=(self.id,event.id) if event and event.id else (self.id,))
+
+  def calculate_hash(self):
+    m = hashlib.sha512()
+    m.update(self.email)
+    return unicode(m.hexdigest())
+
 
   def __repr__(self):
     return self.visible_name().encode('utf-8')

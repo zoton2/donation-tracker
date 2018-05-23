@@ -155,7 +155,7 @@ class Donor(models.Model):
   # Donor specific info
   paypalemail = models.EmailField(max_length=128,unique=True,null=True,blank=True,verbose_name='Paypal Email')
   solicitemail = models.CharField(max_length=32,choices=(('CURR', 'Use Existing (Opt Out if not set)'),('OPTOUT', 'Opt Out'), ('OPTIN','Opt In')),default='CURR')
-  identityhash = models.CharField(max_length=64,null=True,unique=True,verbose_name='Email Hash')
+  identityhash = models.CharField(max_length=128,null=True,unique=True,verbose_name='Email Hash')
   anonymized = models.BooleanField(default=False)
 
   class Meta:

@@ -132,7 +132,7 @@ class Event(models.Model):
   pendingdonationemailtemplate = models.ForeignKey(post_office.models.EmailTemplate, verbose_name='Pending Donation Email Template', default=None, null=True, blank=True, on_delete=models.PROTECT, related_name='event_pending_donation_templates')
   donationemailsender = models.EmailField(max_length=128, null=True, blank=True, verbose_name='Donation Email Sender')
   scheduleid = models.CharField(max_length=128, unique=True, null=True, blank=True, verbose_name='Schedule ID (LEGACY)', editable=False)
-  date = models.DateField()
+  date = models.DateTimeField()
   timezone = TimeZoneField(default='US/Eastern')
   locked = models.BooleanField(default=False,help_text='Requires special permission to edit this event or anything associated with it')
   # Fields related to prize management
@@ -250,7 +250,7 @@ class SpeedRun(models.Model):
       if prev:
         self.starttime = prev.starttime + datetime.timedelta(milliseconds=i(prev.run_time)+i(prev.setup_time))
       else:
-        self.starttime = self.event.timezone.localize(datetime.datetime.combine(self.event.date, datetime.time(16,00)))
+        self.starttime = self.event.date
       self.endtime = self.starttime + datetime.timedelta(milliseconds=i(self.run_time)+i(self.setup_time))
 
     if fix_runners and self.id:
@@ -276,7 +276,7 @@ class SpeedRun(models.Model):
         if prev:
           self.starttime = prev.starttime + datetime.timedelta(milliseconds=i(prev.run_time)+i(prev.setup_time))
         else:
-          self.starttime = self.event.timezone.localize(datetime.datetime.combine(self.event.date, datetime.time(16,00)))
+          self.starttime = self.event.date
         next = SpeedRun.objects.filter(event=self.event, starttime__gte=self.starttime).exclude(order=None).first()
         if next and next.starttime != self.starttime:
           return [self] + next.save(*args, **kwargs)

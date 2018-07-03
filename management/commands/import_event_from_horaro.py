@@ -5,6 +5,7 @@ import urllib, json
 import re
 import dateutil.parser
 from datetime import datetime, timedelta
+from itertools import izip_longest, tee
 
 import tracker.models as models
 import tracker.viewutil as viewutil
@@ -31,16 +32,15 @@ class Command(commandutil.TrackerCommand):
 
         raw_runs = data['schedule']['items']
         base_setup_time = (data['schedule']['setup_t']) * 1000
-        setup_time = 0
         order=0
-        for raw_run in raw_runs:
+        for (raw_run, peek) in setup_peek(raw_runs):
             order += 1
+            setup_time = base_setup_time
+            if peek != None and peek['options'] != None and peek['options']['setup'] != None:
+                setup_time = parse_duration(peek['options']['setup']).seconds * 1000
+
             get_run(event, order, raw_run, setup_time)
-            options = raw_run['options']
-            if options != None:
-                setup_time = parse_duration(options['setup'] or "0m").seconds * 1000
-            else:
-                setup_time = base_setup_time
+            
 
 def get_run(event, order, json_run, setup_time = 0):
     name = ""
@@ -119,3 +119,8 @@ def parse_duration(duration):
         return timedelta(hours=num)
     elif duration.endswith('d'):
         return timedelta(days=num)
+
+def setup_peek(raw_runs):
+    iterator, peeker = tee(iter(raw_runs))
+    next(peeker)
+    return izip_longest(iterator, peeker, fillvalue=None)

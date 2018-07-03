@@ -9,7 +9,7 @@
 @import "partials/_settings.scss";
 
 body {
-	//background: $background-gradient-darker;
+	background: $background-gradient-darker;
 	color: $white;
 	font-family: $condensed;
 
@@ -53,22 +53,33 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 .table {
+  thead > tr > th {
+    border-bottom: 2px solid $purple;
+  }
 	tbody {
-    background-color: $white;
-		color: $black;
+    background-color: $background-darker;
+		color: $white;
 
     a {
-      color: $blue;
+      color: $orange;
     }
 	}
 
   hr {
     display: none;
   }
+
+  td {
+    border-top: 2px solid $background !important;  
+  }
+
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: $background-darker;
 }
 
 .table-striped > tbody > tr:nth-of-type(even) {
-    background-color: #e9e9e9;
+    background-color: $background;
 }
 
 .panel {

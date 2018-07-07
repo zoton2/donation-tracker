@@ -18,6 +18,8 @@ class Command(commandutil.TrackerCommand):
     def add_arguments(self, parser):
         parser.add_argument('-he', '--horaro', help='name of horaro event to import', required=True, default="esa/2018-winter")
         parser.add_argument('-e', '--event', help='name of event to import to', required=False, default="")
+        parser.add_argument('-s', '--safe', help="Don't delete anything", action='store_true')
+        parser.add_argument('-l', '--linked', help="Horaro entries have links attached", action='store_true')
 
     def handle(self, *args, **options):
         super(Command, self).handle(*args, **options)
@@ -30,6 +32,9 @@ class Command(commandutil.TrackerCommand):
         except models.Event.DoesNotExist:
             event = models.event.LatestEvent()
 
+        #Remove any existing order to prevent duplicate orders and so we can delete all the unordered ones afterwards.
+        models.SpeedRun.objects.filter(event=event.id).update(order=None)
+
         raw_runs = data['schedule']['items']
         base_setup_time = (data['schedule']['setup_t']) * 1000
         order=0
@@ -40,20 +45,37 @@ class Command(commandutil.TrackerCommand):
                 setup_time = parse_duration(peek['options']['setup']).seconds * 1000
 
             get_run(event, order, raw_run, setup_time)
+
+        if options["safe"]:
+            print("Would have deleted:")
+            for run in models.SpeedRun.objects.filter(event=event.id,order=None):
+                print(run.name, run.category)
+        else:
+            print("Deleting {0} runs".format(models.SpeedRun.objects.filter(event=event.id,order=None).count()))
+            #Clear out any old runs that still linger, which means they are deleted from Horaro.
+            models.SpeedRun.objects.filter(event=event.id,order=None).delete()
+
             
+offline_id = 1
 
 def get_run(event, order, json_run, setup_time = 0):
-    name = ""
-    name_match = re.match(r"^\[?(.*)\]?\(?(.*)?\)?", json_run['data'][0], flags=re.U or re.S)
-    if name_match:
-        name = name_match.group(1)
+    name = json_run['data'][0]
+    if name[0] == '[':
+        name_match = re.match(r"^\[(.*)\]\((.*)\)?", name, flags=re.U or re.S)
+        if name_match:
+            name = name_match.group(1)
 
-    category = json_run['data'][3]
+    if name == "OFFLINE":
+        global offline_id
+        name = "OFFLINE {0}".format(offline_id)
+        offline_id += 1
+
+    category = json_run['data'][3] or "Sleep%"
     print(name, category)
 
     run = None
     try:
-        run = models.SpeedRun.objects.get(name=name, category=category, event=event)
+        run = models.SpeedRun.objects.get(name__iexact=name, category__iexact=category, event=event)
     except models.SpeedRun.DoesNotExist:
         run = models.SpeedRun(
             name = name,
@@ -68,19 +90,22 @@ def get_run(event, order, json_run, setup_time = 0):
         run.order = order
         run.starttime = start_time
         run.endtime = start_time+run_duration
-        run.console = json_run['data'][2]
+        run.console = json_run['data'][2] or "N/A"
         run.run_time = json_run['length_t']*1000
         run.setup_time = setup_time
+        
         run.save()
 
-        raw_runners = (json_run['data'][1]).split(',')
-        for raw_runner in raw_runners:
-            runner_match = re.match("\[?(.*)\]?\(?(.*)?\)?", raw_runner, flags=re.U or re.S)
-            if runner_match:
-                runner_name = runner_match.group(1)
-                runner_stream = runner_match.group(2)
-                runner = get_runner(runner_name, runner_stream)
+        if json_run['data'][1]:
+            raw_runners = re.findall(r"\[([^ \[\]]*)\]\(([^ \(\)]*)\)", json_run['data'][1])
 
+            #if len(raw_runners) < 1:
+            #    raw_runners = (json_run['data'][1]).replace("vs.", ',').split(',')
+
+            for raw_runner in raw_runners:
+                runner_name = raw_runner[0]
+                runner_stream = raw_runner[1]
+                runner = get_runner(runner_name, runner_stream)
                 if runner != None:
                     run.runners.add(runner)
                     run.save()

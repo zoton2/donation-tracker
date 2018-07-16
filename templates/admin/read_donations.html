@@ -55,6 +55,49 @@ $(document).ready(function(){
   setTimeout(runSearch, 0);
 });
 
+function makeLoadButton(row, donation, text) {
+  var btn = $("<button>")
+  btn.append(text);
+  btn.on('click', function(){
+    searchParams = {
+      feed : "toread",
+      donation: donation.pk,
+    };
+
+    row.find(".bidcell").html("Loading...");
+
+    trackerAPI.searchObjects("donationbid", searchParams, function(status, responseText) {
+      if (status == 200) {
+        var resultsTable = $("<table class='bids'>");
+        row.find(".bidcell").empty();
+        row.find(".bidcell").append(resultsTable);
+        resultsTable.html(
+        );
+
+        var bids = eval(responseText);
+        let namex = /(.*) -- (.*) -- .*/;
+
+        for (let bid of bids) {
+            matches = namex.exec(bid.fields.public)
+
+            newrow = $("<tr>");
+            title = $("<td>").html(matches[1] + ":" + matches[2]);
+            newrow.append(title);
+
+            value = $("<td>").html("$" + bid.fields.amount);
+            newrow.append(value);
+            resultsTable.append(newrow);
+        }
+      }
+      else
+      {
+        row.find(".bidcell").html("Error: " + responseText['error']);
+      }
+    }); 
+  });
+  return btn;
+}
+
 function addRow(donation) {
   var row = $("<tr>");
   var id = parseInt(donation['pk']);
@@ -69,6 +112,8 @@ function addRow(donation) {
     .append(makeEditButton(row, donation, "Block Comment", "Blocked comment", { readstate: "IGNORED", commentstate: "DENIED" })));
 
   row.append($('<td class="statuscell">'));
+  row.append($('<td class="bidcell">')
+    .append(makeLoadButton(row, donation, "Donation Bids")));
 
   resultsTable.append(row);
 }
@@ -101,6 +146,7 @@ function runSearch() {
         "<th> Comment </th>" +
         "<th> Actions </th>" +
         "<th> Status </th>" +
+        "<th> Bids </th>" +
         "</tr>");
 
       var donations = eval(responseText);

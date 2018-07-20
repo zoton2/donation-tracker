@@ -852,7 +852,7 @@ class SpeedRunAdmin(CustomModelAdmin):
   list_display = ('name', 'category', 'description', 'deprecated_runners', 'starttime', 'run_time', 'setup_time')
   fieldsets = [(None, { 'fields': ('name', 'display_name', 'category', 'console', 'release_year', 'description', 'event', 'starttime', 'run_time', 'setup_time', 'deprecated_runners', 'runners', 'coop', 'tech_notes',) }),]
   readonly_fields = ('deprecated_runners', 'starttime')
-  actions = ['start_run']
+  actions = ['start_run', 'unschedule']
 
   def start_run(self, request, runs):
     if len(runs) != 1:
@@ -863,6 +863,11 @@ class SpeedRunAdmin(CustomModelAdmin):
       self.message_user(request, 'Run is first run.', level=messages.ERROR)
     else:
       return HttpResponseRedirect(settings.SITE_PREFIX + 'admin/start_run/' + str(runs[0].id))
+
+  def unschedule(self, request, runs):
+    if len(runs) < 1:
+      self.message_user(request, "Pick at least one run.", level=messages.ERROR)
+    runs.update(order=None,starttime=None,endtime=None)
 
   def get_queryset(self, request):
     event = viewutil.get_selected_event(request)

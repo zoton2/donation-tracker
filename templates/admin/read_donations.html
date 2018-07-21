@@ -20,6 +20,9 @@ td {
 
 <script>
 
+var queryDict = {};
+location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1]});
+
 var partitionLanguageElem = "#partition_language";
 var languageCookieName = 'donation_processing_language';
 
@@ -47,6 +50,9 @@ function setLanguageCookie() {
 }
 
 $(document).ready(function(){
+  $("#select_event").val(queryDict["event"] || "");
+  setEvent();
+
   resultsTable = $("#id_result_set");
 
   getLanguageCookie();
@@ -54,6 +60,17 @@ $(document).ready(function(){
 
   setTimeout(runSearch, 0);
 });
+
+function setEvent() {
+  var zevent = $("#select_event").val();
+  if (zevent) {
+    window.history.pushState({},"", "?event=" + zevent);
+  } else {
+    window.history.pushState({},"", "?");
+  }
+  zcurrentEvent = zevent;
+}
+
 
 function makeLoadButton(row, donation, text) {
   var btn = $("<button>")
@@ -118,6 +135,8 @@ function addRow(donation) {
   resultsTable.append(row);
 }
 
+
+
 function runSearch() {
 
   searchParams = {
@@ -127,6 +146,10 @@ function runSearch() {
   {% if currentEvent %}
   searchParams.event = {{ currentEvent.id }};
   {% endif %}
+
+  if (zcurrentEvent) {
+    searchParams.event = zcurrentEvent
+  }
 
   //TODO: it would be nice to animate removed rows fading out, and new rows fading in, but
   // I think we should focus on _functionality_ over style for now
@@ -169,7 +192,6 @@ function runSearch() {
 
     enableElements($("#id_result_set").get(0));
   });
-
 }
 
 </script>
@@ -186,6 +208,14 @@ function runSearch() {
   <option value="de">German</option>
   <option value="un">Unknown</option>
 </select>
+
+<label>Stream</label>
+<select id="select_event" onchange="setEvent()">
+  <option value="">All</option>
+  <option value="2">Stream 1</option>
+  <option value="3">Stream 2</option>
+</select>
+
 <button onclick="runSearch();">Refresh</button>
 
 <span id="id_loading"></span>

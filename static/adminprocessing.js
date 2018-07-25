@@ -110,8 +110,9 @@ function getObjectModel(obj) {
   return obj["model"].split(".")[1];
 }
 
-function makeEditButton(row, obj, text, resultText, fields) {
-  var button = $('<button>' + text + '</button>').get(0);
+function makeEditButton(row, obj, text, resultText, fields, className) {
+  var classDefinition = className ? ' class="' + className + '"' : '';
+  var button = $('<button' + classDefinition +'>' + text + '</button>').get(0);
   
   button.onclick = function() {
     disableElements(row);

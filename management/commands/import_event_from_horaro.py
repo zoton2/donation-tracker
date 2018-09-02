@@ -44,7 +44,7 @@ class Command(commandutil.TrackerCommand):
         for (raw_run, peek) in setup_peek(raw_runs):
             order += 1
             setup_time = base_setup_time
-            if peek != None and peek['options'] != None and peek['options']['setup'] != None:
+            if peek != None and 'options' in peek and 'setup' in peek['options']:
                 setup_time = parse_duration(peek['options']['setup']).seconds * 1000
 
             get_run(event, columns, order, raw_run, setup_time)

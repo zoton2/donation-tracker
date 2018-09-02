@@ -79,6 +79,8 @@ def get_run(event, columns, order, json_run, setup_time = 0):
         name = "OFFLINE {0}".format(offline_id)
         offline_id += 1
 
+    name = name[:64] #Truncate becuase DB limitation
+
     category = json_run['data'][columns["Category"]] or "Sleep%"
     print(name, category)
 

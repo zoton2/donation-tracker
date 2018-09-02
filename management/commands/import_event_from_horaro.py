@@ -38,7 +38,7 @@ class Command(commandutil.TrackerCommand):
         raw_runs = data['schedule']['items']
         base_setup_time = (data['schedule']['setup_t']) * 1000
 
-        columns = get_columns()
+        columns = get_columns(data['schedule'])
 
         order=0
         for (raw_run, peek) in setup_peek(raw_runs):

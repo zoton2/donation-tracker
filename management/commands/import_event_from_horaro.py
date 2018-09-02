@@ -37,6 +37,9 @@ class Command(commandutil.TrackerCommand):
 
         raw_runs = data['schedule']['items']
         base_setup_time = (data['schedule']['setup_t']) * 1000
+
+        columns = get_columns()
+
         order=0
         for (raw_run, peek) in setup_peek(raw_runs):
             order += 1
@@ -44,7 +47,7 @@ class Command(commandutil.TrackerCommand):
             if peek != None and peek['options'] != None and peek['options']['setup'] != None:
                 setup_time = parse_duration(peek['options']['setup']).seconds * 1000
 
-            get_run(event, order, raw_run, setup_time)
+            get_run(event, columns, order, raw_run, setup_time)
 
         if options["safe"]:
             print("Would have deleted:")
@@ -55,11 +58,17 @@ class Command(commandutil.TrackerCommand):
             #Clear out any old runs that still linger, which means they are deleted from Horaro.
             models.SpeedRun.objects.filter(event=event.id,order=None).delete()
 
+
+def get_columns(schedule):
+    columns = dict()
+    for id, col in enumerate(schedule["columns"]):
+        columns[col] = id
+    return columns
             
 offline_id = 1
 
-def get_run(event, order, json_run, setup_time = 0):
-    name = json_run['data'][0]
+def get_run(event, columns, order, json_run, setup_time = 0):
+    name = json_run['data'][columns["Game"]]
     if name[0] == '[':
         name_match = re.match(r"^\[(.*)\]\((.*)\)?", name, flags=re.U or re.S)
         if name_match:
@@ -70,7 +79,7 @@ def get_run(event, order, json_run, setup_time = 0):
         name = "OFFLINE {0}".format(offline_id)
         offline_id += 1
 
-    category = json_run['data'][3] or "Sleep%"
+    category = json_run['data'][columns["Category"]] or "Sleep%"
     print(name, category)
 
     run = None
@@ -90,7 +99,7 @@ def get_run(event, order, json_run, setup_time = 0):
         run.order = order
         run.starttime = start_time
         run.endtime = start_time+run_duration
-        run.console = json_run['data'][2] or "N/A"
+        run.console = json_run['data'][columns["Plattform"]] or "N/A"
         run.run_time = json_run['length_t']*1000
         run.setup_time = setup_time
         

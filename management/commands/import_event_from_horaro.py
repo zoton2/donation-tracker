@@ -107,19 +107,33 @@ def get_run(event, columns, order, json_run, setup_time = 0):
         
         run.save()
 
-        if json_run['data'][1]:
-            raw_runners = re.findall(r"\[([^ \[\]]*)\]\(([^ \(\)]*)\)", json_run['data'][1])
+        if json_run['data'][columns["Runner(s)"]]:
+            runner_column = json_run['data'][columns["Runner(s)"]]
+            if runner_column[0] == '[':
+                #ESA mode
+                raw_runners = re.findall(r"\[([^ \[\]]*)\]\(([^ \(\)]*)\)", runner_column)
 
-            #if len(raw_runners) < 1:
-            #    raw_runners = (json_run['data'][1]).replace("vs.", ',').split(',')
+                #if len(raw_runners) < 1:
+                #    raw_runners = (json_run['data'][1]).replace("vs.", ',').split(',')
 
-            for raw_runner in raw_runners:
-                runner_name = raw_runner[0]
-                runner_stream = raw_runner[1]
-                runner = get_runner(runner_name, runner_stream)
-                if runner != None:
-                    run.runners.add(runner)
-                    run.save()
+                for raw_runner in raw_runners:
+                    runner_name = raw_runner[0]
+                    runner_stream = raw_runner[1]
+                    runner = get_runner(runner_name, runner_stream)
+                    if runner != None:
+                        run.runners.add(runner)
+                        run.save()
+            elif event.short.startswith('uksg'):
+                #UKSG mode
+                raw_runners = runner_column.split("&")
+                raw_runner_streams = json_run['data'][columns["Twitch Username(s)"]].split('&')
+                for (raw_runner,raw_twitch) in zip(raw_runners, raw_runner_streams):
+                    runner_name = raw_runner.strip()
+                    runner_stream = "https://twitch.tv/" + raw_twitch.strip()
+                    runner = get_runner(runner_name, runner_stream)
+                    if runner != None:
+                        run.runners.add(runner)
+                        run.save()
 
         return run
     return None

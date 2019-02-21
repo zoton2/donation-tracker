@@ -166,6 +166,15 @@ function runSearch() {
 {% endif %}
 
 <button onclick="runSearch();">Refresh</button>
+<label for="id_autoRefresh">Auto-Refresh?</label>
+<input type="checkbox" id="id_autoRefresh">
+<script>
+  setInterval(function() {
+    if (document.getElementById("id_autoRefresh").checked) {
+      runSearch();
+    }
+  }, 10000);
+</script>
 
 <span id="id_loading"></span>
 

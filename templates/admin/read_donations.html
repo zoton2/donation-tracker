@@ -212,11 +212,20 @@ function runSearch() {
 <label>Stream</label>
 <select id="select_event" onchange="setEvent()">
   <option value="">All</option>
-  <option value="2">Stream 1</option>
-  <option value="3">Stream 2</option>
+  <option value="9">Stream 1</option>
+  <option value="10">Stream 2</option>
 </select>
 
 <button onclick="runSearch();">Refresh</button>
+<label for="id_autoRefresh">Auto-Refresh?</label>
+<input type="checkbox" id="id_autoRefresh">
+<script>
+  setInterval(function() {
+    if (document.getElementById("id_autoRefresh").checked) {
+      runSearch();
+    }
+  }, 10000);
+  </script>
 
 <span id="id_loading"></span>
 

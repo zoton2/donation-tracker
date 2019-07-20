@@ -38,10 +38,10 @@
 
         {% if event.id == None %}
         <p class="center-block col-xs-12 col-md-6">
-            <a class="btn btn-lg btn-warning btn-block" href="{% url 'tracker:index' '2018_one' %}">Stream 1</a>
+            <a class="btn btn-lg btn-warning btn-block" href="{% url 'tracker:index' 'esa2019s1' %}">Stream 1</a>
         </p>
         <p class="center-block col-xs-12 col-md-6">
-            <a class="btn btn-lg btn-warning btn-block" href="{% url 'tracker:index' '2018_two' %}">Stream 2</a>
+            <a class="btn btn-lg btn-warning btn-block" href="{% url 'tracker:index' 'esa2019s2' %}">Stream 2</a>
         </p>
         {% endif %}
     </div>

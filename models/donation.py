@@ -180,7 +180,6 @@ class Donor(models.Model):
     self.alias = 'Anonymous'
     self.firstname = "Anon"
     self.lastname = "ymous"
-    self.visibility == 'ANON'
     self.addresscity = ''
     self.addressstreet = ''
     self.addressstate = ''

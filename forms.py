@@ -101,7 +101,7 @@ class DonationEntryForm(forms.Form):
         self.fields['comment'] = forms.CharField(
             widget=forms.Textarea, required=False)
         self.fields['requestedvisibility'] = forms.ChoiceField(
-            initial='CURR', choices=models.Donation._meta.get_field('requestedvisibility').choices, label='Name Visibility')
+            initial='ALIAS', choices=models.Donation._meta.get_field('requestedvisibility').choices, label='Name Visibility')
         self.fields['requestedalias'] = forms.CharField(
             max_length=32, label='Preferred Alias', required=False)
         self.fields['requestedemail'] = forms.EmailField(

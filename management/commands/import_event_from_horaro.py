@@ -63,6 +63,11 @@ def get_columns(schedule):
     columns = dict()
     for id, col in enumerate(schedule["columns"]):
         columns[col] = id
+    if not "Player(s)" in columns and "Runner(s)" in columns:
+         columns["Player(s)"] = columns["Runner(s)"]
+    if not "Player(s)" in columns and "Runner" in columns:
+         columns["Player(s)"] = columns["Runner"]
+
     return columns
             
 offline_id = 1
@@ -101,14 +106,18 @@ def get_run(event, columns, order, json_run, setup_time = 0):
         run.order = order
         run.starttime = start_time
         run.endtime = start_time+run_duration
-        run.console = json_run['data'][columns["Plattform"]] or "N/A"
+        if "Platform" in columns:
+            run.console = json_run['data'][columns["Platform"]]
+        else:
+            run.console = "N/A"
+
         run.run_time = json_run['length_t']*1000
         run.setup_time = setup_time
         
         run.save()
 
-        if json_run['data'][columns["Runner(s)"]]:
-            runner_column = json_run['data'][columns["Runner(s)"]]
+        if json_run['data'][columns["Player(s)"]]:
+            runner_column = json_run['data'][columns["Player(s)"]]
             if runner_column[0] == '[':
                 #ESA mode
                 raw_runners = re.findall(r"\[([^ \[\]]*)\]\(([^ \(\)]*)\)", runner_column)

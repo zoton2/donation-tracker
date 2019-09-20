@@ -25,7 +25,7 @@ __all__ = [
 ]
 
 _timezoneChoices = list(map(lambda x: (x,x), pytz.common_timezones))
-_currencyChoices = (('USD','US Dollars'),('CAD', 'Canadian Dollars'))
+_currencyChoices = (('USD','US Dollars'),('CAD', 'Canadian Dollars'),('GBP', 'British Pounds'))
 
 
 class TimestampValidator(validators.RegexValidator):

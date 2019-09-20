@@ -31,8 +31,14 @@ def create_ipn(request):
     else:
       donation = get_ipn_donation(ipnObj)
       if not donation:
-        raise Exception('No donation associated with this IPN')
-      ipnObj.verify(None, donation.event.paypalemail)
+        raise Exception('No donation associated with this IPN: Custom field value {!r}'.format(ipnObj.custom))
+      ipnObj.verify()
+
+      # Check if receiver email matches event here.  This removes the need for a custom fork of django-paypal.
+      business = donation.event.paypalemail
+      if (ipnObj.business and ipnObj.business.lower() != business.lower()) or (
+              not ipnObj.business and ipnObj.receiver_email.lower() != business.lower()):
+        ipnObj.set_flag("Business email mismatch. (%s)" % ipnObj.business)
   ipnObj.save()
   return ipnObj
 

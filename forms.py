@@ -1,4 +1,4 @@
-import paypal
+import paypal.standard.forms
 import re
 from decimal import *
 import collections
@@ -37,6 +37,7 @@ import tracker.widgets
 from tracker.templatetags.donation_tags import address as address_template
 
 __all__ = [
+    'PayPalDonationsForm',
     'UsernameForm',
     'DonationCredentialsForm',
     'DonationEntryForm',
@@ -62,6 +63,19 @@ __all__ = [
     'PrizeAcceptanceWithAddressForm',
     'PrizeShippingFormSet',
 ]
+
+
+class PayPalDonationsForm(paypal.standard.forms.PayPalPaymentsForm):
+    """Override default payments form to default to donate button, and support test mode setting per event.
+    This removes the need for a custom fork of django-paypal.
+    """
+
+    def __init__(self, button_type="donate", sandbox=True, *args, **kwargs):
+        super(PayPalDonationsForm, self).__init__(button_type, *args, **kwargs)
+        self.sandbox = sandbox
+
+    def test_mode(self):
+        return self.sandbox
 
 
 class UsernameForm(forms.Form):

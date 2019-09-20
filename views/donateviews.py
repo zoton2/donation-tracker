@@ -14,10 +14,6 @@ from django.views.decorators.cache import never_cache, cache_page
 from django.core import serializers
 from django.core.urlresolvers import reverse
 
-from paypal.standard.forms import PayPalPaymentsForm
-from paypal.standard.ipn.models import PayPalIPN
-from paypal.standard.ipn.forms import PayPalIPNForm
-
 import post_office.mail
 
 from . import common as views_common
@@ -102,7 +98,7 @@ def donate(request, event):
           "no_shipping": 0,
         }
         # Create the form instance
-        form = PayPalPaymentsForm(button_type="donate", sandbox=donation.event.usepaypalsandbox, initial=paypal_dict)
+        form = forms.PayPalDonationsForm(button_type="donate", sandbox=donation.event.usepaypalsandbox, initial=paypal_dict)
         context = {"event": donation.event, "form": form }
         return views_common.tracker_response(request, "tracker/paypal_redirect.html", context)
     else:

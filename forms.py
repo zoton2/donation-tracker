@@ -122,9 +122,9 @@ class DonationEntryForm(forms.Form):
             max_length=128, label='Preferred Email', required=False)
         self.fields['requestedsolicitemail'] = forms.ChoiceField(
             initial='CURR', choices=models.Donation._meta.get_field('requestedsolicitemail').choices, label='Charity Email Opt In')
-        self.fields['acceptprivacypolicy'] = forms.BooleanField(
-            required=True, 
-            label=mark_safe('I have read and accept the <a href="https://esamarathon.com/privacy" target="_blank">Privacy Policy</a>'))
+        #self.fields['acceptprivacypolicy'] = forms.BooleanField(
+            #required=True, 
+            #label=mark_safe('I have read and accept the <a href="https://esamarathon.com/privacy" target="_blank">Privacy Policy</a>'))
 
     def clean(self):
         if self.cleaned_data['requestedvisibility'] == 'ALIAS' and not self.cleaned_data['requestedalias']:

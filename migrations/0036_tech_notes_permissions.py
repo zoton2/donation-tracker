@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='speedrun',
-            options={'ordering': ['event__date', 'order'], 'verbose_name': 'Speed Run', 'permissions': (('can_view_tech_notes', 'Can view tech notes'),)},
+            options={'ordering': ['event__date', 'order'], 'verbose_name': 'Speedrun', 'permissions': (('can_view_tech_notes', 'Can view tech notes'),)},
         ),
         migrations.AlterField(
             model_name='speedrun',

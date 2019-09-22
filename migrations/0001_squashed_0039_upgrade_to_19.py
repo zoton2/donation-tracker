@@ -464,7 +464,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['event__date', 'starttime'],
-                'verbose_name': 'Speed Run',
+                'verbose_name': 'Speedrun',
             },
         ),
         migrations.CreateModel(
@@ -588,7 +588,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='speedrun',
-            options={'ordering': ['event__date', 'order'], 'verbose_name': 'Speed Run'},
+            options={'ordering': ['event__date', 'order'], 'verbose_name': 'Speedrun'},
         ),
         migrations.AddField(
             model_name='speedrun',
@@ -971,7 +971,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='speedrun',
-            options={'ordering': ['event__date', 'order'], 'permissions': (('can_view_tech_notes', 'Can view tech notes'),), 'verbose_name': 'Speed Run'},
+            options={'ordering': ['event__date', 'order'], 'permissions': (('can_view_tech_notes', 'Can view tech notes'),), 'verbose_name': 'Speedrun'},
         ),
         migrations.AlterField(
             model_name='speedrun',

@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='speedrun',
-            options={'ordering': ['event__date', 'order'], 'verbose_name': 'Speed Run'},
+            options={'ordering': ['event__date', 'order'], 'verbose_name': 'Speedrun'},
         ),
         migrations.AddField(
             model_name='speedrun',

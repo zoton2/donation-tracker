@@ -311,7 +311,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'ordering': ['event__date', 'starttime'],
-                'verbose_name': 'Speed Run',
+                'verbose_name': 'Speedrun',
             },
         ),
         migrations.CreateModel(

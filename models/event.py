@@ -224,7 +224,7 @@ class SpeedRun(models.Model):
 
   class Meta:
     app_label = 'tracker'
-    verbose_name = 'Speed Run'
+    verbose_name = 'Speedrun'
     unique_together = (( 'name','category','event' ), ('event', 'order'))
     ordering = [ 'event__date', 'order' ]
     permissions = (

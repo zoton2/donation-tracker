@@ -143,7 +143,7 @@ class TestGeneric(APITestCase):
 
 
 class TestSpeedRun(APITestCase):
-    model_name = 'Speed Run'
+    model_name = 'Speedrun'
 
     def setUp(self):
         super(TestSpeedRun, self).setUp()

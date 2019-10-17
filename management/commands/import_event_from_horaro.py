@@ -1,4 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
+from bs4 import BeautifulSoup
+from markdown import markdown
 
 import settings
 import urllib, json
@@ -16,21 +18,20 @@ class Command(commandutil.TrackerCommand):
     help = 'Import event from horaro'
 
     def add_arguments(self, parser):
-        parser.add_argument('-he', '--horaro', help='name of horaro event to import', required=True, default="esa/2018-winter")
-        parser.add_argument('-e', '--event', help='name of event to import to', required=False, default="")
+        parser.add_argument('-he', '--horaro', help='name of horaro event to import', required=True, default="")
+        parser.add_argument('-e', '--event', help='name of event to import to', required=True, default="")
+        parser.add_argument('-rc', '--runnercol', help='column name for runners', required=False, default="Player(s)")
+        parser.add_argument('-gc', '--gamecol', help='column name for games', required=False, default="Game")
+        parser.add_argument('-cc', '--categorycol', help='column name for categorys', required=False, default="Category")
+        parser.add_argument('-pc', '--platformcol', help='column name for platforms', required=False, default="Platform")
         parser.add_argument('-s', '--safe', help="Don't delete anything", action='store_true')
-        parser.add_argument('-l', '--linked', help="Horaro entries have links attached", action='store_true')
 
     def handle(self, *args, **options):
         super(Command, self).handle(*args, **options)
 
         url = "https://horaro.org/" + options["horaro"] + ".json?named=true"
         data = json.loads(urllib.urlopen(url).read())
-        event = models.event.LatestEvent()
-        try:
-            event = models.Event.objects.get(short=options["event"])
-        except models.Event.DoesNotExist:
-            event = models.event.LatestEvent()
+        event = models.Event.objects.get(short=options["event"])
 
         #Remove any existing order to prevent duplicate orders and so we can delete all the unordered ones afterwards.
         models.SpeedRun.objects.filter(event=event.id).update(order=None)
@@ -44,10 +45,10 @@ class Command(commandutil.TrackerCommand):
         for (raw_run, peek) in setup_peek(raw_runs):
             order += 1
             setup_time = base_setup_time
-            if peek != None and 'options' in peek and 'setup' in peek['options']:
+            if peek is not None and 'options' in peek and peek['options'] is not None and 'setup' in peek['options']:
                 setup_time = parse_duration(peek['options']['setup']).seconds * 1000
 
-            get_run(event, columns, order, raw_run, setup_time)
+            get_run(event, columns, order, raw_run, options, setup_time)
 
         if options["safe"]:
             print("Would have deleted:")
@@ -63,30 +64,11 @@ def get_columns(schedule):
     columns = dict()
     for id, col in enumerate(schedule["columns"]):
         columns[col] = id
-    if not "Player(s)" in columns and "Runner(s)" in columns:
-         columns["Player(s)"] = columns["Runner(s)"]
-    if not "Player(s)" in columns and "Runner" in columns:
-         columns["Player(s)"] = columns["Runner"]
-
     return columns
-            
-offline_id = 1
 
-def get_run(event, columns, order, json_run, setup_time = 0):
-    name = json_run['data'][columns["Game"]]
-    if name[0] == '[':
-        name_match = re.match(r"^\[(.*)\]\((.*)\)?", name, flags=re.U or re.S)
-        if name_match:
-            name = name_match.group(1)
-
-    if name == "OFFLINE":
-        global offline_id
-        name = "OFFLINE {0}".format(offline_id)
-        offline_id += 1
-
-    name = name[:64] #Truncate becuase DB limitation
-
-    category = json_run['data'][columns["Category"]] or "Sleep%"
+def get_run(event, columns, order, json_run, options, setup_time = 0):
+    name = strip_markdown(json_run['data'][columns[options["gamecol"]]])[:64] #Truncate becuase DB limitation
+    category = json_run['data'][columns[options["categorycol"]]] or "N/A"
     print(name, category)
 
     run = None
@@ -106,55 +88,33 @@ def get_run(event, columns, order, json_run, setup_time = 0):
         run.order = order
         run.starttime = start_time
         run.endtime = start_time+run_duration
-        if "Platform" in columns:
-            run.console = json_run['data'][columns["Platform"]]
-        else:
-            run.console = "N/A"
-
+        if options["platformcol"] in columns and json_run['data'][columns[options["platformcol"]]]:
+            run.console = json_run['data'][columns[options["platformcol"]]]
         run.run_time = json_run['length_t']*1000
         run.setup_time = setup_time
         
         run.save()
 
-        if json_run['data'][columns["Player(s)"]]:
-            runner_column = json_run['data'][columns["Player(s)"]]
-            if runner_column[0] == '[':
-                #ESA mode
-                raw_runners = re.findall(r"\[([^ \[\]]*)\]\(([^ \(\)]*)\)", runner_column)
-
-                #if len(raw_runners) < 1:
-                #    raw_runners = (json_run['data'][1]).replace("vs.", ',').split(',')
-
-                for raw_runner in raw_runners:
-                    runner_name = raw_runner[0]
-                    runner_stream = raw_runner[1]
-                    runner = get_runner(runner_name, runner_stream)
-                    if runner != None:
-                        run.runners.add(runner)
-                        run.save()
-            elif event.short.startswith('uksg'):
-                #UKSG mode
-                raw_runners = runner_column.split("&")
-                raw_runner_streams = json_run['data'][columns["Twitch Username(s)"]].split('&')
-                for (raw_runner,raw_twitch) in zip(raw_runners, raw_runner_streams):
-                    runner_name = raw_runner.strip()
-                    runner_stream = "https://twitch.tv/" + raw_twitch.strip()
-                    runner = get_runner(runner_name, runner_stream)
-                    if runner != None:
-                        run.runners.add(runner)
-                        run.save()
+        if json_run['data'][columns[options["runnercol"]]]:
+            runner_column = strip_markdown(json_run['data'][columns[options["runnercol"]]])
+            raw_runners = runner_column.replace(' vs. ', ', ').split(', ')
+            for raw_runner in raw_runners:
+                runner_name = raw_runner
+                runner = get_runner(runner_name)
+                if runner != None:
+                    run.runners.add(runner)
+                    run.save()
 
         return run
     return None
 
-def get_runner(name, stream):
+def get_runner(name):
     try:
         return models.Runner.objects.get(name=name)
 
     except models.Runner.DoesNotExist: 
         runner = models.Runner(
             name = name,
-            stream = stream,
             donor = get_donor(name)
         )
         runner.save()
@@ -183,3 +143,8 @@ def setup_peek(raw_runs):
     iterator, peeker = tee(iter(raw_runs))
     next(peeker)
     return izip_longest(iterator, peeker, fillvalue=None)
+
+def strip_markdown(str):
+    html = markdown(str)
+    text = ''.join(BeautifulSoup(html).findAll(text=True))
+    return text

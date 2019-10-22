@@ -181,7 +181,7 @@ def LatestEvent():
 
 class PostbackURL(models.Model):
   event = models.ForeignKey('Event', on_delete=models.PROTECT, verbose_name='Event', null=False, blank=False, related_name='postbacks')
-  url = models.URLField(blank=False,null=False,verbose_name='URL')
+  url = models.CharField(blank=False,null=False,verbose_name='URL',max_length=300)
   class Meta:
     app_label = 'tracker'
 

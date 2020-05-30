@@ -12,7 +12,6 @@ body {
     font-family: 'Source Sans Pro', Verdana;
     font-weight: 400;
     font-size: 13px;
-    background-color: $background;
     color: $white;
 }
 
@@ -35,7 +34,6 @@ a:hover {
 }
 
 #container {
-  background-color: $background-darker;
   margin-left: auto;
   margin-right: auto;
   width: 980px;

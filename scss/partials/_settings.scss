@@ -31,7 +31,7 @@ html, body {
    font-size: 16px;
    font-family: $serif;
    background: $background;
-   background: $background-gradient-darker;
+   /* image here ? */
    background-size: 100%;
    background-repeat: no-repeat;
    background-attachment: fixed;
@@ -45,29 +45,6 @@ html, body {
     overflow: hidden;
     width: 100%;
     position: fixed;
-}
-   
-}
-body {
-    &:after {
-       content: '';
-       height: 25rem;
-       max-width: 25rem;
-       width: 70%;
-       position: fixed;
-       right: 0;
-       background-image: url('../img/slogan-bg.png');
-       background-size: 100%;
-       background-position: right bottom;
-       background-repeat: no-repeat;
-       display: block;
-       opacity: 0;
-       bottom: 0;
-       z-index: 2;
-       pointer-events: none;
-       @include medium-up {
-          opacity: 1;
-       }
     }
 }
 h1, h2, h3 , h4, span, p, a {

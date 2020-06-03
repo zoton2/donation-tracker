@@ -1,24 +1,27 @@
-from django.core.management.base import BaseCommand, CommandError
-from bs4 import BeautifulSoup
-from markdown import markdown
-
-import settings
-import urllib, json
+import json
 import re
-import dateutil.parser
+import urllib
 from datetime import datetime, timedelta
 from itertools import izip_longest, tee
 
-import tracker.models as models
-import tracker.viewutil as viewutil
-import tracker.prizemail as prizemail
+import dateutil.parser
+from bs4 import BeautifulSoup
+from django.core.management.base import BaseCommand, CommandError
+from markdown import markdown
+
+import settings
 import tracker.commandutil as commandutil
+import tracker.models as models
+import tracker.prizemail as prizemail
+import tracker.viewutil as viewutil
+
 
 class Command(commandutil.TrackerCommand):
     help = 'Import event from horaro'
 
     def add_arguments(self, parser):
         parser.add_argument('-he', '--horaro', help='name of horaro event to import', required=True, default="")
+        parser.add_argument('-hk', '--horarokey', help='key for horaro event, if needed', required=False, default="")
         parser.add_argument('-e', '--event', help='name of event to import to', required=True, default="")
         parser.add_argument('-rc', '--runnercol', help='column name for runners', required=False, default="Player(s)")
         parser.add_argument('-gc', '--gamecol', help='column name for games', required=False, default="Game")
@@ -28,8 +31,10 @@ class Command(commandutil.TrackerCommand):
 
     def handle(self, *args, **options):
         super(Command, self).handle(*args, **options)
-
-        url = "https://horaro.org/" + options["horaro"] + ".json?named=true"
+            
+        url = "https://horaro.org/" + options["horaro"] + ".json"
+        if (options["horarokey"]):
+            url += "?key=" + options["horarokey"]
         data = json.loads(urllib.urlopen(url).read())
         event = models.Event.objects.get(short=options["event"])
 
